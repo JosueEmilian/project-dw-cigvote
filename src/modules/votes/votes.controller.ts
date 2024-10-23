@@ -34,7 +34,7 @@ export class VotesController {
   }
 
   @Get('results')
-  // @Auth(ValidRoles.ADMIN)
+  @Auth(ValidRoles.ADMIN)
   @ApiOperation({ summary: 'Get all votes' })
   @ApiResponse({
     status: 200,
@@ -45,7 +45,7 @@ export class VotesController {
   }
 
   @Put('close-voting')
-  // @Auth(ValidRoles.ADMIN)
+  @Auth(ValidRoles.ADMIN)
   @ApiOperation({ summary: 'Close voting and get the results' })
   closeVoting() {
     return this.votesService.closeVoting();
