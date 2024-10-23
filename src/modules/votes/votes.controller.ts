@@ -1,8 +1,8 @@
 import {
   Get,
-  Put,
   Post,
   Body,
+  Patch,
   Controller,
 } from '@nestjs/common';
 
@@ -50,7 +50,7 @@ export class VotesController {
     return this.votesService.results();
   }
 
-  @Put('close-voting')
+  @Patch('toggle-voting')
   @Auth(ValidRoles.ADMIN)
   @ApiOperation({ summary: 'Close voting and get the results' })
   @ApiBody({ type: ToggleVotingDto })
