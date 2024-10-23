@@ -30,7 +30,7 @@ export class CampaignController {
   constructor(private readonly campaignService: CampaignService) {}
 
   @Post()
-  // @Auth(ValidRoles.ADMIN)
+  @Auth(ValidRoles.ADMIN)
   @ApiOperation({ summary: 'Create a new campaign' })
   @ApiResponse({ status: 201, description: 'Campaign created successfully' })
   async create(@Body() createCampaign: CreateCampaignDto) {
@@ -39,7 +39,7 @@ export class CampaignController {
   }
 
   @Get()
-  // @Auth(ValidRoles.ADMIN, ValidRoles.USER)
+  @Auth(ValidRoles.ADMIN, ValidRoles.USER)
   @ApiOperation({ summary: 'Get all campaigns' })
   @ApiResponse({
     status: 200,
@@ -53,7 +53,7 @@ export class CampaignController {
   }
 
   @Get('/:id')
-  // @Auth(ValidRoles.ADMIN, ValidRoles.USER)
+  @Auth(ValidRoles.ADMIN, ValidRoles.USER)
   @ApiOperation({ summary: 'Get a campaign by id' })
   @ApiParam({ name: 'id', type: 'number', example: 1 })
   @ApiResponse({ status: 200, description: 'Campaign retrieved successfully' })
@@ -63,7 +63,7 @@ export class CampaignController {
   }
 
   @Put('/:id')
-  // @Auth(ValidRoles.ADMIN)
+  @Auth(ValidRoles.ADMIN)
   @ApiOperation({ summary: 'Update a campaign by id' })
   @ApiParam({ name: 'id', type: 'number', example: 1 })
   @ApiResponse({ status: 200, description: 'Campaign updated successfully' })
@@ -76,7 +76,7 @@ export class CampaignController {
   }
 
   @Delete('/:id')
-  // @Auth(ValidRoles.ADMIN)
+  @Auth(ValidRoles.ADMIN)
   @ApiOperation({ summary: 'Delete a campaign by id' })
   @ApiParam({ name: 'id', type: 'number', example: 1 })
   @ApiResponse({ status: 200, description: 'Campaign deleted successfully' })

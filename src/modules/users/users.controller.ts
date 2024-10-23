@@ -21,7 +21,7 @@ import { ValidRoles } from '../auth/interfaces';
 
 @ApiTags('Users')
 @Controller('user')
-// @Auth(ValidRoles.ADMIN)
+@Auth(ValidRoles.ADMIN)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

@@ -30,7 +30,7 @@ export class CandidateController {
   constructor(private readonly candidateService: CandidateService) {}
 
   @Post()
-  // @Auth(ValidRoles.ADMIN)  
+  @Auth(ValidRoles.ADMIN)  
   @ApiOperation({ summary: 'Create a new candidate' })
   @ApiResponse({ status: 201, description: 'Candidate created successfully' })
   create(@Body() createCandidate: CreateCandidateDto) {
@@ -38,7 +38,7 @@ export class CandidateController {
   }
 
   @Get()
-  // @Auth(ValidRoles.ADMIN, ValidRoles.USER)
+  @Auth(ValidRoles.ADMIN, ValidRoles.USER)
   @ApiOperation({ summary: 'Get all candidates' })
   @ApiResponse({
     status: 200,
@@ -51,7 +51,7 @@ export class CandidateController {
 
   // Management candidates
   @Get('by-campaign/:campaignId')
-  // @Auth(ValidRoles.ADMIN, ValidRoles.USER)
+  @Auth(ValidRoles.ADMIN, ValidRoles.USER)
   @ApiOperation({ summary: 'Get all candidates by campaign' })
   @ApiParam({ name: 'campaignId', type: 'number', example: 1 })
   @ApiResponse({
@@ -64,7 +64,7 @@ export class CandidateController {
   }
 
   @Get('search/:term')
-  // @Auth(ValidRoles.ADMIN, ValidRoles.USER)
+  @Auth(ValidRoles.ADMIN, ValidRoles.USER)
   @ApiOperation({ summary: 'Get a candidate by UUID and FullName' })
   @ApiResponse({
     status: 200,
@@ -75,7 +75,7 @@ export class CandidateController {
   }
 
   @Put(':uuid')
-  // @Auth(ValidRoles.ADMIN)
+  @Auth(ValidRoles.ADMIN)
   @ApiOperation({ summary: 'Update a candidate by UUID' })
   @ApiParam({ name: 'uuid', type: 'string', example: '123e4567-e89b-12d3-a456-426614174000' })
   @ApiResponse({ status: 200, description: 'Candidate updated successfully' })
@@ -87,7 +87,7 @@ export class CandidateController {
   }
 
   @Delete(':uuid')
-  // @Auth(ValidRoles.ADMIN)
+  @Auth(ValidRoles.ADMIN)
   @ApiOperation({ summary: 'Delete a candidate by UUID' })
   @ApiResponse({ status: 200, description: 'Candidate deleted successfully' })
   remove(@Param('uuid', ParseUUIDPipe) uuid: string) {
