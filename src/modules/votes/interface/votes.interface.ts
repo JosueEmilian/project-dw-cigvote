@@ -1,6 +1,7 @@
 export interface CandidateResult {
-  candidateName:  string;
-  totalVotes:     number;
+  candidateName:        string;
+  candidateDescription: string;
+  totalVotes:           number;
 }
 
 export interface CampaignResult {
