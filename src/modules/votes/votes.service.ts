@@ -10,8 +10,8 @@ import {
 
 import { DataSource } from 'typeorm';
 
-import { CreateVoteDto } from './dto/votes.dto';
 import { CampaignResult } from './interface/votes.interface';
+import { CreateVoteDto, ToggleVotingDto } from './dto/votes.dto';
 import { Campaign, Candidate, Vote } from 'src/common/entities';
 
 @Injectable()
@@ -119,7 +119,7 @@ export class VotesService {
     }
   }
 
-  async results():Promise<CampaignResult[]> {
+  async results(): Promise<CampaignResult[]> {
     try {
       const resultsVotes = await this.dataSource
         .createQueryBuilder()
@@ -127,37 +127,42 @@ export class VotesService {
           'ca.title as "campaignTitle"',
           'ca.description as "campaignDescription"',
           'c.fullname as "candidateName"',
+          'c.description as "candidateDescription"',
           'COUNT(v.voteid) as totalVotes',
         ])
         .from(Campaign, 'ca')
         .innerJoin(Candidate, 'c', 'ca.campaignId = c.campaignId')
         .leftJoin(Vote, 'v', 'c.candidateId = v.candidateId')
-        .groupBy('ca.title, ca.description, c.fullName')
+        .groupBy('ca.title, ca.description, c.fullName, c.description', )
         .orderBy('ca.title', 'ASC')
         .addOrderBy('totalVotes', 'DESC')
         .getRawMany();
 
-      const formattedData:CampaignResult[] = resultsVotes.reduce((acc, result) => {
-        const campaignIndex = acc.findIndex(
-          (item) => item.campaignTitle === result.campaignTitle,
-        );
+      const formattedData: CampaignResult[] = resultsVotes.reduce(
+        (acc, result) => {
+          const campaignIndex = acc.findIndex(
+            (item) => item.campaignTitle === result.campaignTitle,
+          );
 
-        const candidate = {
-          candidateName: result.candidateName,
-          totalVotes: parseInt(result.totalvotes, 10),
-        };
+          const candidate = {
+            candidateName: result.candidateName,
+            candidateDescription: result.candidateDescription,
+            totalVotes: parseInt(result.totalvotes, 10),
+          };
 
-        if (campaignIndex > -1) {
-          acc[campaignIndex].candidates.push(candidate);
-        } else {
-          acc.push({
-            campaignTitle: result.campaignTitle,
-            campaignDescription: result.campaignDescription,
-            candidates: [candidate],
-          });
-        }
-        return acc;
-      }, []);
+          if (campaignIndex > -1) {
+            acc[campaignIndex].candidates.push(candidate);
+          } else {
+            acc.push({
+              campaignTitle: result.campaignTitle,
+              campaignDescription: result.campaignDescription,
+              candidates: [candidate],
+            });
+          }
+          return acc;
+        },
+        [],
+      );
 
       return formattedData;
     } catch (error) {
@@ -169,23 +174,30 @@ export class VotesService {
     }
   }
 
-  async closeVoting(): Promise<{ results: CampaignResult[] }> {
+  async toggleVoting(
+    toogleVoting: ToggleVotingDto,
+  ): Promise<{ message: string; results?: CampaignResult[] }> {
     try {
+      const { enableVoting } = toogleVoting;
       await this.dataSource
         .createQueryBuilder()
         .update(Campaign)
-        .set({ isvotingenabled: false })
+        .set({ isvotingenabled: enableVoting })
         .execute();
 
-      const votingResults =  await this.results();
-      return {
-        results: votingResults,
-      };
-
+      if (!enableVoting) {
+        const votingResults = await this.results();
+        return {
+          message: 'Voting has been disabled, here are the final results.',
+          results: votingResults,
+        };
+      } else {
+        return { message: 'Voting has been enabled.' };
+      }
     } catch (error) {
-      this.logger.error(`Error closing voting: ${error.message}`, error.stack);
+      this.logger.error(`Error toggling voting: ${error.message}`, error.stack);
       throw new HttpException(
-        `Failed to close voting: ${error.message}`,
+        `Failed to toggle voting: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
