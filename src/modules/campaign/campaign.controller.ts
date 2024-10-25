@@ -39,7 +39,7 @@ export class CampaignController {
   }
 
   @Get()
-  @Auth(ValidRoles.ADMIN, ValidRoles.USER)
+  // @Auth(ValidRoles.ADMIN, ValidRoles.USER)
   @ApiOperation({ summary: 'Get all campaigns' })
   @ApiResponse({
     status: 200,

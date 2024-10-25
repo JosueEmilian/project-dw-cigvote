@@ -1,12 +1,13 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
+  IsDateString,
   IsEmail,
-  Matches,
+  IsNotEmpty,
+  IsNumber,
   IsString,
+  Matches,
   MaxLength,
   MinLength,
-  IsNotEmpty,
-  IsDateString,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -43,10 +44,7 @@ export class CreateUserDto {
     example: '1234567891023',
   })
   @IsNotEmpty()
-  @IsString()
-  @MinLength(13)
-  @MaxLength(13)
-  @Matches(/^\d+$/, { message: 'DPI must contain only numbers' })
+  @IsNumber()
   dpi: string;
 
   @ApiProperty({

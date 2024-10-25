@@ -14,11 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
-import { 
-  Role,
-  User,
-  User_Role 
-} from 'src/common/entities';
+import { Role, User, User_Role } from 'src/common/entities';
 import { LoginUserDto } from './dto/login-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { IResponseUser, JwtPayload } from './interfaces';
@@ -37,8 +33,7 @@ export class AuthService {
     private readonly userRoleRepository: Repository<User_Role>,
 
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService 
-
+    private readonly configService: ConfigService,
   ) {}
 
   async create(createUser: CreateUserDto): Promise<IResponseUser> {
@@ -48,7 +43,7 @@ export class AuthService {
     await queryRunner.startTransaction();
 
     try {
-      const defaultRoleName = this.configService.get<string>('DEFAULT_ROLE'); 
+      const defaultRoleName = this.configService.get<string>('DEFAULT_ROLE');
 
       const { password, ...userData } = createUser;
 
@@ -80,6 +75,7 @@ export class AuthService {
           id: user.userid,
           username: user.fullname,
           email: user.email,
+          rol: defaultRole.roleid,
         }),
       };
     } catch (error) {
@@ -99,6 +95,11 @@ export class AuthService {
         select: { fullname: true, email: true, password: true, userid: true },
       });
 
+      const role = await this.userRoleRepository.findOne({
+        where: { user: user },
+        relations: ['role'],
+      });
+
       if (!user) {
         throw new UnauthorizedException('Invalid credentials');
       }
@@ -114,6 +115,7 @@ export class AuthService {
           id: user.userid,
           username: user.fullname,
           email: user.email,
+          rol: role.role.roleid,
         }),
       };
     } catch (error) {
@@ -128,6 +130,7 @@ export class AuthService {
         id: user.userid,
         username: user.fullname,
         email: user.email,
+        rol: user.userRoles[0].role.roleid,
       }),
     };
   }

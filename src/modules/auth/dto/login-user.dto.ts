@@ -1,11 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  Matches,
-  IsString,
-  MaxLength,
-  MinLength,
-  IsNotEmpty,
   IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsString
 } from 'class-validator';
 
 export class LoginUserDto {
@@ -24,10 +22,7 @@ export class LoginUserDto {
     example: '1234567891023',
   })
   @IsNotEmpty()
-  @IsString()
-  @MinLength(13)
-  @MaxLength(13)
-  @Matches(/^\d+$/, { message: 'DPI must contain only numbers' })
+  @IsNumber()
   dpi: string;
 
   @ApiProperty({
@@ -46,15 +41,6 @@ export class LoginUserDto {
   })
   @IsNotEmpty()
   @IsString()
-  @MinLength(8)
-  @MaxLength(88)
-  @Matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-    {
-      message:
-        'Password too weak. Must include at least one uppercase letter, one lowercase letter, one number, and one special character.',
-    },
-  )
   password: string;
 }
 
@@ -65,5 +51,4 @@ export class ResponseAuth {
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
   })
   token: string;
-
 }

@@ -24,10 +24,12 @@ export class UserRoleGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('validRoles');
     const validRoles: string[] = this.reflector.get(
       META_ROLES,
       context.getHandler(),
     );
+
 
     if (!validRoles || validRoles.length === 0) return true;
 

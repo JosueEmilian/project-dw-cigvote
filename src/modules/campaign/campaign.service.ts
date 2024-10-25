@@ -1,14 +1,12 @@
-import { 
-  Logger,
-  HttpStatus, 
-  Injectable, 
-  HttpException, 
-} from '@nestjs/common';
+import { Logger, HttpStatus, Injectable, HttpException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { Campaign } from 'src/common/entities';
 import { ICampaign, CampaignList } from './interface/campaign.interface';
-import { CreateCampaignDto, UpdateCampaignDto } from './dto/create-campaign.dto';
+import {
+  CreateCampaignDto,
+  UpdateCampaignDto,
+} from './dto/create-campaign.dto';
 
 @Injectable()
 export class CampaignService {
@@ -28,14 +26,14 @@ export class CampaignService {
         .returning(['campaignid'])
         .execute();
 
-      const id:number = campaing.raw[0]?.campaignid;
+      const id: number = campaing.raw[0]?.campaignid;
       return {
         message: 'Campaign created successfully',
         id: id,
       };
     } catch (error) {
       this.logger.error(error.message);
-      throw error
+      throw error;
     }
   }
 
@@ -50,18 +48,13 @@ export class CampaignService {
           'c.isvotingenabled as isVotingEnabled',
         ])
         .from(Campaign, 'c')
-        // .where('c.isvotingenabled = :isActive', { isActive: true })
         .orderBy('c.campaignid')
         .getRawMany<CampaignList>();
-
-      if (!campaigns.length) {
-        throw new HttpException('No campaigns found', HttpStatus.NOT_FOUND);
-      }
 
       return campaigns;
     } catch (error) {
       this.logger.error(error.message);
-      throw error
+      throw error;
     }
   }
 
@@ -114,7 +107,7 @@ export class CampaignService {
         message: 'Updated sucesfully!',
       };
     } catch (error) {
-      if(error instanceof HttpException) {
+      if (error instanceof HttpException) {
         throw error;
       }
       this.logger.error(error.message);
@@ -144,7 +137,7 @@ export class CampaignService {
         message: 'Campaign removed successfully',
       };
     } catch (error) {
-      if(error instanceof HttpException) {
+      if (error instanceof HttpException) {
         throw error;
       }
       this.logger.error(error.message);
